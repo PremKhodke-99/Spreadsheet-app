@@ -39,11 +39,33 @@ const useStore = create((set) => ({
   },
 
   undoData: () => {
-    set((state) => {});
+    set((state) => {
+      if (state.previousData.length === 0) return state;
+
+      const previous = state.previousData[state.previousData.length - 1];
+      const newPreviousData = state.previousData.slice(0, -1);
+
+      return {
+        gridCellData: previous,
+        previousData: newPreviousData,
+        forwardData: [state.gridCellData, ...state.forwardData],
+      };
+    });
   },
 
   redoData: () => {
-    set((state) => {});
+    set((state) => {
+      if (state.forwardData.length === 0) return state;
+
+      const forward = state.forwardData[0];
+      const newForward = state.previousData.slice(1);
+      console.log(forward)
+      return {
+        gridCellData: forward,
+        previousData: [...state.previousData, state.gridCellData],
+        forwardData: newForward,
+      };
+    });
   },
 }));
 
